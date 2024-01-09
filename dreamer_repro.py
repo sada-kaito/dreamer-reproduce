@@ -25,7 +25,7 @@ def define_config():
     config = tools_repro.AttrDict()
     # General
     config.logdir = pathlib.Path('.')
-    config.load_model = False
+    config.load_model = True
     config.seed = 0
     config.steps = 5e6
     config.eval_every = 1e4
@@ -36,7 +36,7 @@ def define_config():
     # Environment
     config.domain = 'walker'
     config.task = 'walk'
-    config.action_count = 4
+    config.action_count = 2
     config.time_limit = 1000
     config.prefill = 5000
     config.clip_rewards = 'none'
@@ -48,7 +48,7 @@ def define_config():
     # con
     
     # Training
-    config.batch_size = 50
+    config.batch_size = 100
     config.batch_length = 50
     config.train_every = 1000
     config.train_steps = 100
@@ -375,13 +375,15 @@ def main(config):
     
     while step < config.steps:
         # print('Start evaluation.')
+        start_time = time.time()
         obs = test_env.reset()
         done = False
         state = None
-        while not done:
-            action, state = agent.policy(obs, state, training=False)
-            action = np.array(action)
-            obs, _, done = test_env.step(action[0])
+        if step % 10000 == 0:
+            while not done:
+                action, state = agent.policy(obs, state, training=False)
+                action = np.array(action)
+                obs, _, done = test_env.step(action[0])
             
         # print('Start collection.')
         obs = train_env.reset()
@@ -398,6 +400,9 @@ def main(config):
         step = count_steps(datadir, config)
         agent.write_summaries(step)
         agent.save()
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"プログラムの実行時間: {elapsed_time} 秒")
         
 
 
