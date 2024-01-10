@@ -3,11 +3,13 @@ import functools
 import pathlib
 import json
 import os
+import time
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' 
 os.environ['MUJOCO_GL'] = 'egl'
 
 import numpy as np
+import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras.mixed_precision import global_policy
 from tensorflow.keras.mixed_precision import set_global_policy
@@ -29,7 +31,6 @@ def define_config():
     config.seed = 0
     config.steps = 5e6
     config.eval_every = 1e4
-    config.log_every = 1e3
     config.log_scalars = True
     config.precision = 16
     
@@ -41,18 +42,14 @@ def define_config():
     config.prefill = 5000
     config.clip_rewards = 'none'
     
-    
     # Model
     config.free_nats = 3.0
     config.kl_scale = 1.0
-    # con
     
     # Training
     config.batch_size = 50
     config.batch_length = 50
-    config.train_every = 1000
     config.train_steps = 100
-    config.pretrain = 100
     config.model_lr = 6e-4
     config.value_lr = 8e-5
     config.actor_lr = 8e-5
@@ -76,11 +73,6 @@ class Dreamer(tf.keras.Model):
         self._metrics = collections.defaultdict(tf.metrics.Mean)
         self.float = global_policy().compute_dtype
         self._writer = writer
-        # self.strategy = tf.distribute.MirroredStrategy()
-        # with self.strategy.scope():
-        #   self.dataset = iter(self.strategy.experimental_distribute_dataset(
-        #       load_dataset(datadir, self.c)))
-        #   self.build_model()
         self.dataset = iter(load_dataset(datadir, self.c))
         self.build_model()
     
@@ -118,7 +110,6 @@ class Dreamer(tf.keras.Model):
             div = tf.reduce_mean(tfd.kl_divergence(post_dist, prior_dist))
             div = tf.maximum(div, self.c.free_nats)
             model_loss = self.c.kl_scale * div - sum(likes.values())
-            # model_loss /= float(self.strategy.num_replicas_in_sync)
             
         with tf.GradientTape() as actor_tape:
             imag_feat = self._imagine_ahead(post)
@@ -162,12 +153,10 @@ class Dreamer(tf.keras.Model):
             action = self.actor(feat).sample()
         else:
             action = self.actor(feat).mode()
-        # action = self.exploration(action, training)
         action = tf.reshape(action, (1,6))
         state = (latent, action)
         return action, state
-    
-    # def exploration(self, action, training):
+
 
     def _imagine_ahead(self, post):
         flatten = lambda x: tf.reshape(x, [-1] + list(x.shape[2:]))
@@ -193,8 +182,8 @@ class Dreamer(tf.keras.Model):
         self._metrics['value_grad_norm'].update_state(value_norm)
         self._metrics['prior_entropy'].update_state(prior_dist.entropy())
         self._metrics['post_entropy'].update_state(post_dist.entropy())
-        self._metrics['image_loss'].update_state(likes['image'])
-        self._metrics['reward_loss'].update_state(likes['reward'])
+        self._metrics['image_loss'].update_state(-likes['image'])
+        self._metrics['reward_loss'].update_state(-likes['reward'])
         self._metrics['kl_div'].update_state(div)
         self._metrics['model_loss'].update_state(model_loss)
         self._metrics['value_loss'].update_state(value_loss)
@@ -286,54 +275,6 @@ set_global_policy(Policy('mixed_float16'))
 
 config = define_config()
 
-'''
-dataset = load_dataset('episodes', config)
-# print(dataset)
-iterator = iter(dataset)
-first_batch = next(iterator)
-# print(first_batch['image'].shape)
-# print(first_batch['action'].shape)
-images = first_batch['image'][0]
-# import matplotlib.pyplot as plt
-# import time
-# for image in images:
-#     plt.imshow(image)
-#     plt.axis('off')
-#     plt.show()
-#     time.sleep(0.02)  # 画像表示の間隔（秒）
-
-
-dataset = iter(dataset)
-step = 1
-# while True:
-#     try:
-#         print(next(dataset)['image'].shape)
-#         print(step)
-#         step += 1
-#     except StopIteration:
-#         break
-
-
-dynamics = models_repro.RSSM()
-encoder = models_repro.ConvEncoder()
-data = next(dataset)
-embed = encoder(data)
-action = data['action']
-post, prior = dynamics.observe(embed, action)
-# prior = dynamics.imagine(action)
-
-agent = Dreamer(config, datadir='episodes')
-
-agent.train(data)
-
-
-imag_feat = agent._imagine_ahead(post)
-
-
-'''
-import matplotlib.pyplot as plt
-import time
-
 def main(config):
     if config.precision == 16:
         set_global_policy(Policy('mixed_float16'))
@@ -341,7 +282,6 @@ def main(config):
     config.logdir.mkdir(parents=True, exist_ok=True)
     
     datadir = config.logdir / 'episodes'
-    checkpointdir = config.logdir / 'checkpoints'
     
     writer = tf.summary.create_file_writer(
         str(config.logdir), max_queue=1000, flush_millis=20000)
@@ -371,21 +311,18 @@ def main(config):
         
     state = None
     done = None
-    steps = config.eval_every // config.action_count
     
     while step < config.steps:
-        # print('Start evaluation.')
         start_time = time.time()
         obs = test_env.reset()
         done = False
         state = None
-        if step % 10000 == 0:
+        if step % config.eval_every == 0:
             while not done:
                 action, state = agent.policy(obs, state, training=False)
                 action = np.array(action)
                 obs, _, done = test_env.step(action[0])
-            
-        # print('Start collection.')
+
         obs = train_env.reset()
         done = False
         state = None
@@ -405,11 +342,11 @@ def main(config):
         print(f"プログラムの実行時間: {elapsed_time} 秒")
         
 
+if __name__ == "__main__":
+    main(config)
+    pass
 
-main(config)
 
-
-print('end')
 
 
 
