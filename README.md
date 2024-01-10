@@ -18,11 +18,11 @@ conda env create -n 環境名 -f dreamer-gpu.yml
 - matplotlib               3.8.2
 - numpy                    1.26.2
 - tensorflow-gpu           2.10.0
--tensorflow_probability   0.18.0
--dm-control               1.0.15
--gym                      0.26.2
--cuda-toolkit             11.2
--cudnn                    8.1
+- tensorflow_probability   0.18.0
+- dm-control               1.0.15
+- gym                      0.26.2
+- cuda-toolkit             11.2
+- cudnn                    8.1
 
 # 既知のエラー(修正方法が分からなかった)
 import egl errorみたいなエラーがたまに出ます．  
