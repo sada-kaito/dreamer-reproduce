@@ -13,11 +13,11 @@ anaconda prompt上でdreamer-gpu.ymlを保存したディレクトリに移動�
 conda env create -n 環境名 -f dreamer-gpu.yml
 ```
 **もしくは以下のライブラリをインストール**
--python                   3.9.18
--pandas                   2.1.3
--matplotlib               3.8.2
--numpy                    1.26.2
--tensorflow-gpu           2.10.0
+- python                   3.9.18
+- pandas                   2.1.3
+- matplotlib               3.8.2
+- numpy                    1.26.2
+- tensorflow-gpu           2.10.0
 -tensorflow_probability   0.18.0
 -dm-control               1.0.15
 -gym                      0.26.2
