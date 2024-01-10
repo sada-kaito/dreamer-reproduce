@@ -1,5 +1,5 @@
 # 説明
-'Dream to Control: Learning Behaviors by Latent Imagination'のDreamerをdreproducitonしました．  
+**Dream to Control: Learning Behaviors by Latent Imagination**(Danijar Hafner, Timothy Lillicrap, Jimmy Ba, Mohammad Norouzi, 2020)のDreamerを再実装しました．  
 Atari環境は用いず，dm_control suite環境のみで動かせます．
 
 # 実行環境
