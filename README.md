@@ -34,5 +34,5 @@ import egl errorみたいなエラーがたまに出ます．
 **このエラーが出た時の対処法**  
 僕はspyderで動かしていたので，その時の対処法を記しておきます．  
 1.spyderを一度閉じるもしくはPCの再起動を行う．  
-2.spyderを開き，test/t_dm_control.pyを開いて，一度実行する．
+2.spyderを開き，test/t_dm_control.pyを開いて，一度実行する．  
 3.その後に，dreamer_repro.pyを実行する．  
