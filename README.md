@@ -1,5 +1,7 @@
 # 説明
 **Dream to Control: Learning Behaviors by Latent Imagination (Danijar Hafner, Timothy Lillicrap, Jimmy Ba, Mohammad Norouzi, 2020)**  のDreamerを再実装しました．  
+![reconstruction_image](https://github.com/sada-kaito/dreamer-reproduce/assets/143638502/0c183f27-1cdd-4824-a4b7-1e9bfedbe602)
+
 Atari環境は用いず，dm_control suite環境のみで動かせます．
 
 # 実行環境
@@ -25,9 +27,8 @@ conda env create -n 環境名 -f dreamer-gpu.yml
 - cudnn                    8.1
 
 # 既知のエラー(修正方法が分からなかった)
-![スクリーンショット 2024-01-11 102143](https://github.com/sada-kaito/dreamer-reproduce/assets/143638502/242a1ced-0711-46ca-815f-21a40836ada9)
 ![スクリーンショット 2024-01-11 102131](https://github.com/sada-kaito/dreamer-reproduce/assets/143638502/082fb519-ea33-467b-ac14-4f9508a68790)
-
+![スクリーンショット 2024-01-11 102143](https://github.com/sada-kaito/dreamer-reproduce/assets/143638502/242a1ced-0711-46ca-815f-21a40836ada9)
 import egl errorみたいなエラーがたまに出ます．  
 **このエラーが出た時の対処法**
 僕はspyderで動かしていたので，その時の対処法を記しておきます．  
