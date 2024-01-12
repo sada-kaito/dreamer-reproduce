@@ -1,6 +1,8 @@
 # 説明
 **Dream to Control: Learning Behaviors by Latent Imagination (Danijar Hafner, Timothy Lillicrap, Jimmy Ba, Mohammad Norouzi, 2020)**  のDreamerを再実装しました．  
-![reconstruction_image](https://github.com/sada-kaito/dreamer-reproduce/assets/143638502/0c183f27-1cdd-4824-a4b7-1e9bfedbe602)  
+![walk_animation](https://github.com/sada-kaito/dreamer-reproduce/assets/143638502/ea0ff36c-e5a2-4ccb-9f9a-e27883a3a8bd)
+![run_animation](https://github.com/sada-kaito/dreamer-reproduce/assets/143638502/bcb1c6b8-36b4-41f7-b8ef-9e29e7d7cf4a)  
+
 Atari環境は用いず，dm_control suite環境のみで動かせます．
 
 # 実行環境
