@@ -33,9 +33,9 @@ conda env create -n 環境名 -f dreamer-gpu.yml
 
 # ~~既知のエラー(修正方法が分からなかった)~~　修正済み
 dreamer_repro.pyであらかじめdm_control suiteをインポートしておくとエラーが起きなくなりました。
-'''
+```
 from dm_control import suite
-'''
+```
 
 ![スクリーンショット 2024-01-11 102131](https://github.com/sada-kaito/dreamer-reproduce/assets/143638502/082fb519-ea33-467b-ac14-4f9508a68790)
 ![スクリーンショット 2024-01-11 102143](https://github.com/sada-kaito/dreamer-reproduce/assets/143638502/242a1ced-0711-46ca-815f-21a40836ada9)  
