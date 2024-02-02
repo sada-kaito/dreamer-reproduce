@@ -36,7 +36,8 @@ dreamer_repro.pyであらかじめdm_control suiteをインポートしておく
 ```
 from dm_control import suite
 ```
-
+dreamer_repro.pyでsuiteを使用している個所はないので消したくなりますが、消すとエラーになる可能性があります。　　
+　　
 ![スクリーンショット 2024-01-11 102131](https://github.com/sada-kaito/dreamer-reproduce/assets/143638502/082fb519-ea33-467b-ac14-4f9508a68790)
 ![スクリーンショット 2024-01-11 102143](https://github.com/sada-kaito/dreamer-reproduce/assets/143638502/242a1ced-0711-46ca-815f-21a40836ada9)  
 import egl errorみたいなエラーがたまに出ます.  
